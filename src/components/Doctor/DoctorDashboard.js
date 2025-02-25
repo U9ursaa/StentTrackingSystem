@@ -31,7 +31,29 @@ const DoctorDashboard = () => {
       nextAppointment: "15.03.2024",
       status: "stable",
       stentType: "İlaç Kaplı Stent (DES)",
-      location: "LAD"
+      location: "LAD",
+      medications: [
+        {
+          name: "Plavix",
+          dosage: "75mg",
+          frequency: "Günde 1 kez",
+          timing: "morning",
+          startDate: "15.02.2024",
+          endDate: "15.08.2024",
+          active: true,
+          specialInstructions: "Kahvaltıdan sonra alınmalı"
+        },
+        {
+          name: "Aspirin",
+          dosage: "100mg",
+          frequency: "Günde 1 kez",
+          timing: "morning",
+          startDate: "15.02.2024",
+          endDate: "Süresiz",
+          active: true,
+          specialInstructions: "Mide koruyucu ile birlikte alınmalı"
+        }
+      ]
     },
     {
       id: 2,

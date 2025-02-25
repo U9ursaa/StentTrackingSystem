@@ -35,13 +35,82 @@ const AddPatient = () => {
     medications: []
   });
 
+  // Hazır ilaç listesi
+  const availableMedications = [
+    {
+      id: 1,
+      name: 'Aspirin',
+      commonDosages: ['81mg', '100mg', '300mg'],
+      commonFrequencies: ['Günde 1 kez', 'Günde 2 kez'],
+      defaultInstructions: 'Yemeklerden sonra alınmalıdır.'
+    },
+    {
+      id: 2,
+      name: 'Plavix (Clopidogrel)',
+      commonDosages: ['75mg', '150mg', '300mg'],
+      commonFrequencies: ['Günde 1 kez'],
+      defaultInstructions: 'Yemeklerden bağımsız alınabilir.'
+    },
+    {
+      id: 3,
+      name: 'Brilinta (Ticagrelor)',
+      commonDosages: ['60mg', '90mg'],
+      commonFrequencies: ['Günde 2 kez'],
+      defaultInstructions: 'Yemeklerden bağımsız alınabilir.'
+    },
+    {
+      id: 4,
+      name: 'Coumadin (Warfarin)',
+      commonDosages: ['2.5mg', '5mg', '7.5mg', '10mg'],
+      commonFrequencies: ['Günde 1 kez'],
+      defaultInstructions: 'INR takibi gereklidir. Yeşil yapraklı sebzelerle etkileşime dikkat.'
+    },
+    {
+      id: 5,
+      name: 'Eliquis (Apixaban)',
+      commonDosages: ['2.5mg', '5mg'],
+      commonFrequencies: ['Günde 2 kez'],
+      defaultInstructions: 'Yemeklerden bağımsız alınabilir.'
+    },
+    {
+      id: 6,
+      name: 'Xarelto (Rivaroxaban)',
+      commonDosages: ['10mg', '15mg', '20mg'],
+      commonFrequencies: ['Günde 1 kez'],
+      defaultInstructions: 'Akşam yemeği ile birlikte alınmalıdır.'
+    },
+    {
+      id: 7,
+      name: 'Metoprolol',
+      commonDosages: ['25mg', '50mg', '100mg'],
+      commonFrequencies: ['Günde 1 kez', 'Günde 2 kez'],
+      defaultInstructions: 'Yemeklerden sonra alınmalıdır.'
+    },
+    {
+      id: 8,
+      name: 'Atorvastatin',
+      commonDosages: ['10mg', '20mg', '40mg', '80mg'],
+      commonFrequencies: ['Günde 1 kez'],
+      defaultInstructions: 'Akşam yemeğinden sonra alınmalıdır.'
+    }
+  ];
+
   const [medicationForm, setMedicationForm] = useState({
-    name: '',
+    selectedMedication: '',
     dosage: '',
     frequency: '',
     timing: '',
     specialInstructions: ''
   });
+
+  // Stent tipleri
+  const stentTypes = [
+    { value: 'İlaç Kaplı Stent (DES)', label: 'İlaç Kaplı Stent (DES)' },
+    { value: 'Biyoçözünür Stent (BES)', label: 'Biyoçözünür Stent (BES)' },
+    { value: 'İlaçsız Metal Stent (BMS)', label: 'İlaçsız Metal Stent (BMS)' },
+    { value: 'Polimer Bazlı İlaç Kaplı Stent', label: 'Polimer Bazlı İlaç Kaplı Stent' },
+    { value: 'Polimer İçermeyen İlaç Kaplı Stent', label: 'Polimer İçermeyen İlaç Kaplı Stent' }
+  ];
 
   // Stent lokasyonları
   const stentLocations = [
@@ -49,20 +118,11 @@ const AddPatient = () => {
     { value: 'LCX', label: 'Sol Sirkumfleks Arter (LCX)' },
     { value: 'RCA', label: 'Sağ Koroner Arter (RCA)' },
     { value: 'LMCA', label: 'Sol Ana Koroner Arter (LMCA)' },
+    { value: 'Cx', label: 'Sirkumfleks Arter (Cx)' },
     { value: 'Diagonal', label: 'Diagonal Dal' },
     { value: 'OM', label: 'Obtus Marginalis' },
     { value: 'PDA', label: 'Posterior İnen Arter (PDA)' },
     { value: 'PLV', label: 'Posterolateral Dal (PLV)' }
-  ];
-
-  // Stent tipleri
-  const stentTypes = [
-    { value: 'bms', label: 'İlaçsız Metal Stent (BMS)' },
-    { value: 'des', label: 'İlaç Kaplı Stent (DES)' },
-    { value: 'bes', label: 'Biyoçözünür Stent (BES)' },
-    { value: 'ses', label: 'Kendiliğinden Genişleyen Stent' },
-    { value: 'pdes', label: 'Polimer Bazlı İlaç Kaplı Stent' },
-    { value: 'pfdes', label: 'Polimer İçermeyen İlaç Kaplı Stent' }
   ];
 
   const medicationTimings = [
@@ -125,18 +185,17 @@ const AddPatient = () => {
     }));
   };
 
-  const handleAddMedication = () => {
-    setPatientData(prev => ({
-      ...prev,
-      medications: [...prev.medications, medicationForm]
-    }));
-    setMedicationForm({
-      name: '',
-      dosage: '',
-      frequency: '',
-      timing: '',
-      specialInstructions: ''
-    });
+  const handleMedicationSelect = (event) => {
+    const selectedMed = availableMedications.find(med => med.id === event.target.value);
+    if (selectedMed) {
+      setMedicationForm({
+        selectedMedication: selectedMed.id,
+        dosage: selectedMed.commonDosages[0],
+        frequency: selectedMed.commonFrequencies[0],
+        timing: '',
+        specialInstructions: selectedMed.defaultInstructions
+      });
+    }
   };
 
   return (
@@ -282,9 +341,9 @@ const AddPatient = () => {
                     onChange={handleChange}
                     label="Stent Lokasyonu"
                   >
-                    {stentLocations.map((location) => (
-                      <MenuItem key={location.value} value={location.value}>
-                        {location.label}
+                    {stentLocations.map((loc) => (
+                      <MenuItem key={loc.value} value={loc.value}>
+                        {loc.label}
                       </MenuItem>
                     ))}
                   </Select>
@@ -311,31 +370,58 @@ const AddPatient = () => {
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="İlaç Adı"
-                  value={medicationForm.name}
-                  onChange={(e) => setMedicationForm(prev => ({...prev, name: e.target.value}))}
-                />
+                <FormControl fullWidth>
+                  <InputLabel>İlaç Seçimi</InputLabel>
+                  <Select
+                    value={medicationForm.selectedMedication}
+                    onChange={handleMedicationSelect}
+                    label="İlaç Seçimi"
+                  >
+                    {availableMedications.map((med) => (
+                      <MenuItem key={med.id} value={med.id}>
+                        {med.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Doz"
-                  value={medicationForm.dosage}
-                  onChange={(e) => setMedicationForm(prev => ({...prev, dosage: e.target.value}))}
-                />
+                <FormControl fullWidth>
+                  <InputLabel>Doz</InputLabel>
+                  <Select
+                    value={medicationForm.dosage}
+                    onChange={(e) => setMedicationForm(prev => ({...prev, dosage: e.target.value}))}
+                    label="Doz"
+                  >
+                    {availableMedications
+                      .find(med => med.id === medicationForm.selectedMedication)
+                      ?.commonDosages.map((dosage) => (
+                        <MenuItem key={dosage} value={dosage}>
+                          {dosage}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Kullanım Sıklığı"
-                  value={medicationForm.frequency}
-                  onChange={(e) => setMedicationForm(prev => ({...prev, frequency: e.target.value}))}
-                  placeholder="Örn: Günde 2 kez"
-                />
+                <FormControl fullWidth>
+                  <InputLabel>Kullanım Sıklığı</InputLabel>
+                  <Select
+                    value={medicationForm.frequency}
+                    onChange={(e) => setMedicationForm(prev => ({...prev, frequency: e.target.value}))}
+                    label="Kullanım Sıklığı"
+                  >
+                    {availableMedications
+                      .find(med => med.id === medicationForm.selectedMedication)
+                      ?.commonFrequencies.map((freq) => (
+                        <MenuItem key={freq} value={freq}>
+                          {freq}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
               </Grid>
 
               <Grid item xs={12} sm={6}>
@@ -344,6 +430,7 @@ const AddPatient = () => {
                   <Select
                     value={medicationForm.timing}
                     onChange={(e) => setMedicationForm(prev => ({...prev, timing: e.target.value}))}
+                    label="Kullanım Zamanı"
                   >
                     {medicationTimings.map((timing) => (
                       <MenuItem key={timing.value} value={timing.value}>
@@ -368,7 +455,19 @@ const AddPatient = () => {
               <Grid item xs={12}>
                 <Button
                   variant="contained"
-                  onClick={handleAddMedication}
+                  onClick={() => {
+                    setPatientData(prev => ({
+                      ...prev,
+                      medications: [...prev.medications, medicationForm]
+                    }));
+                    setMedicationForm({
+                      selectedMedication: '',
+                      dosage: '',
+                      frequency: '',
+                      timing: '',
+                      specialInstructions: ''
+                    });
+                  }}
                   sx={{ mt: 1 }}
                 >
                   İlaç Ekle
