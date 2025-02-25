@@ -196,8 +196,23 @@ const DoctorDashboard = () => {
     navigate('/doctor/add-patient');
   };
 
-  const handlePatientClick = (patientId) => {
-    navigate(`/doctor/patient/${patientId}`);
+  const handlePatientClick = (patient) => {
+    navigate(`/doctor/patient/${patient.tcNo}`, { 
+      state: { 
+        patient: {
+          id: patient.id,
+          name: patient.name,
+          tcNo: patient.tcNo,
+          age: patient.age,
+          blockagePercentage: patient.blockagePercentage,
+          lastProcedureDate: patient.lastProcedureDate,
+          nextAppointment: patient.nextAppointment,
+          status: patient.status,
+          stentType: patient.stentType,
+          location: patient.location
+        }
+      }
+    });
   };
 
   return (
@@ -266,13 +281,11 @@ const DoctorDashboard = () => {
               </TableHead>
               <TableBody>
                 {mockPatients.map((patient) => (
-                  <TableRow 
+                  <TableRow
                     key={patient.id}
-                    sx={{ 
-                      '&:hover': { backgroundColor: '#f8f9fa' },
-                      transition: 'background-color 0.2s'
-                    }}
-                    onClick={() => handlePatientClick(patient.id)}
+                    hover
+                    onClick={() => handlePatientClick(patient)}
+                    sx={{ cursor: 'pointer' }}
                   >
                     <TableCell>{patient.name}</TableCell>
                     <TableCell>{patient.tcNo}</TableCell>
