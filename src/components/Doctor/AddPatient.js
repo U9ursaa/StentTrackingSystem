@@ -16,10 +16,6 @@ import {
   Alert
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import tr from 'date-fns/locale/tr';
 import { PatientContext } from '../../context/PatientContext';
 import Header from '../Layout/Header';
 
@@ -197,17 +193,14 @@ const AddPatient = () => {
               </Grid>
 
               <Grid item xs={12} md={6}>
-                <DatePicker
+                <TextField
+                  fullWidth
                   label="Doğum Tarihi"
-                  value={patient.birthDate}
-                  onChange={handleBirthDateChange}
-                  slotProps={{ 
-                    textField: { 
-                      fullWidth: true, 
-                      required: true 
-                    } 
-                  }}
-                  maxDate={new Date()} // Bugünden ileri tarih seçilemez
+                  name="birthDate"
+                  type="date"
+                  value={patient.birthDate ? patient.birthDate.toISOString().split('T')[0] : ''}
+                  onChange={handleChange}
+                  required
                 />
               </Grid>
 
@@ -323,11 +316,14 @@ const AddPatient = () => {
               </Grid>
 
               <Grid item xs={12}>
-                <DatePicker
+                <TextField
+                  fullWidth
                   label="İşlem Tarihi"
-                  value={patient.procedureDate}
-                  onChange={(newValue) => setPatient(prev => ({...prev, procedureDate: newValue}))}
-                  slotProps={{ textField: { fullWidth: true, required: true } }}
+                  name="procedureDate"
+                  type="date"
+                  value={patient.procedureDate ? patient.procedureDate.toISOString().split('T')[0] : ''}
+                  onChange={handleChange}
+                  required
                 />
               </Grid>
 
