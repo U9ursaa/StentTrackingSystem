@@ -31,7 +31,16 @@ const AddPatient = () => {
     location: '',
     lastProcedureDate: new Date().toLocaleDateString('tr-TR'),
     nextAppointment: '',
-    status: 'stable'
+    status: 'stable',
+    medications: []
+  });
+
+  const [medicationForm, setMedicationForm] = useState({
+    name: '',
+    dosage: '',
+    frequency: '',
+    timing: '',
+    specialInstructions: ''
   });
 
   // Stent lokasyonları
@@ -54,6 +63,15 @@ const AddPatient = () => {
     { value: 'ses', label: 'Kendiliğinden Genişleyen Stent' },
     { value: 'pdes', label: 'Polimer Bazlı İlaç Kaplı Stent' },
     { value: 'pfdes', label: 'Polimer İçermeyen İlaç Kaplı Stent' }
+  ];
+
+  const medicationTimings = [
+    { value: 'ac', label: 'Aç Karnına' },
+    { value: 'pc', label: 'Tok Karnına' },
+    { value: 'morning', label: 'Sabah' },
+    { value: 'noon', label: 'Öğlen' },
+    { value: 'evening', label: 'Akşam' },
+    { value: 'night', label: 'Gece Yatmadan' }
   ];
 
   // Yaş hesaplama fonksiyonu
@@ -105,6 +123,20 @@ const AddPatient = () => {
       ...prevState,
       blockagePercentage: newValue
     }));
+  };
+
+  const handleAddMedication = () => {
+    setPatientData(prev => ({
+      ...prev,
+      medications: [...prev.medications, medicationForm]
+    }));
+    setMedicationForm({
+      name: '',
+      dosage: '',
+      frequency: '',
+      timing: '',
+      specialInstructions: ''
+    });
   };
 
   return (
@@ -272,6 +304,98 @@ const AddPatient = () => {
                   sx={{ mb: 2 }}
                 />
               </Grid>
+              <Grid item xs={12}>
+                <Typography variant="h6" gutterBottom>
+                  İlaç Bilgileri
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="İlaç Adı"
+                  value={medicationForm.name}
+                  onChange={(e) => setMedicationForm(prev => ({...prev, name: e.target.value}))}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Doz"
+                  value={medicationForm.dosage}
+                  onChange={(e) => setMedicationForm(prev => ({...prev, dosage: e.target.value}))}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Kullanım Sıklığı"
+                  value={medicationForm.frequency}
+                  onChange={(e) => setMedicationForm(prev => ({...prev, frequency: e.target.value}))}
+                  placeholder="Örn: Günde 2 kez"
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Kullanım Zamanı</InputLabel>
+                  <Select
+                    value={medicationForm.timing}
+                    onChange={(e) => setMedicationForm(prev => ({...prev, timing: e.target.value}))}
+                  >
+                    {medicationTimings.map((timing) => (
+                      <MenuItem key={timing.value} value={timing.value}>
+                        {timing.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={2}
+                  label="Özel Talimatlar"
+                  value={medicationForm.specialInstructions}
+                  onChange={(e) => setMedicationForm(prev => ({...prev, specialInstructions: e.target.value}))}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <Button
+                  variant="contained"
+                  onClick={handleAddMedication}
+                  sx={{ mt: 1 }}
+                >
+                  İlaç Ekle
+                </Button>
+              </Grid>
+
+              {patientData.medications.length > 0 && (
+                <Grid item xs={12}>
+                  <Typography variant="h6" gutterBottom>
+                    Eklenen İlaçlar
+                  </Typography>
+                  {patientData.medications.map((med, index) => (
+                    <Paper key={index} sx={{ p: 2, mb: 1 }}>
+                      <Typography variant="subtitle1">{med.name}</Typography>
+                      <Typography variant="body2">
+                        Doz: {med.dosage} | Sıklık: {med.frequency} | 
+                        Zaman: {medicationTimings.find(t => t.value === med.timing)?.label}
+                      </Typography>
+                      {med.specialInstructions && (
+                        <Typography variant="body2" color="textSecondary">
+                          Özel Talimatlar: {med.specialInstructions}
+                        </Typography>
+                      )}
+                    </Paper>
+                  ))}
+                </Grid>
+              )}
             </Grid>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
               <Button

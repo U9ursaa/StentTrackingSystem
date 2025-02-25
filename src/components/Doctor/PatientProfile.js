@@ -265,6 +265,45 @@ const PatientProfile = () => {
     </Box>
   );
 
+  const renderMedications = () => (
+    <Box>
+      <Typography variant="h6" gutterBottom>
+        İlaç Listesi
+      </Typography>
+      {patient.medications?.map((med, index) => (
+        <Paper key={index} sx={{ p: 2, mb: 2 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Typography variant="h6" color="primary">
+                {med.name}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1">
+                <strong>Doz:</strong> {med.dosage}
+              </Typography>
+              <Typography variant="body1">
+                <strong>Kullanım Sıklığı:</strong> {med.frequency}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body1">
+                <strong>Kullanım Zamanı:</strong> {
+                  medicationTimings.find(t => t.value === med.timing)?.label
+                }
+              </Typography>
+              {med.specialInstructions && (
+                <Typography variant="body1">
+                  <strong>Özel Talimatlar:</strong> {med.specialInstructions}
+                </Typography>
+              )}
+            </Grid>
+          </Grid>
+        </Paper>
+      ))}
+    </Box>
+  );
+
   return (
     <>
       <Header />
@@ -303,7 +342,12 @@ const PatientProfile = () => {
         <Divider sx={{ my: 2 }} />
 
         {activeTab === 0 && renderPersonalInfo()}
-        {activeTab === 1 && renderMedicalHistory()}
+        {activeTab === 1 && (
+          <Box>
+            {renderMedications()}
+            {renderMedicalHistory()}
+          </Box>
+        )}
         {activeTab === 2 && renderAppointments()}
         {activeTab === 3 && renderNotifications()}
       </Box>
