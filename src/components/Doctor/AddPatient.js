@@ -21,7 +21,6 @@ const AddPatient = () => {
     id: Date.now(),
     name: '',
     tcNo: '',
-    age: '',
     birthDate: '',
     phone: '',
     email: '',
@@ -57,19 +56,33 @@ const AddPatient = () => {
     { value: 'pfdes', label: 'Polimer İçermeyen İlaç Kaplı Stent' }
   ];
 
+  // Yaş hesaplama fonksiyonu
+  const calculateAge = (birthDate) => {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    
+    return age;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // LocalStorage'dan mevcut hastaları al
+    // Hasta verisine yaş hesaplamasını ekle
+    const patientWithAge = {
+      ...patientData,
+      age: calculateAge(patientData.birthDate)
+    };
+    
     const existingPatients = JSON.parse(localStorage.getItem('patients') || '[]');
-    
-    // Yeni hastayı ekle
-    const updatedPatients = [...existingPatients, patientData];
-    
-    // LocalStorage'a kaydet
+    const updatedPatients = [...existingPatients, patientWithAge];
     localStorage.setItem('patients', JSON.stringify(updatedPatients));
     
-    // Dashboard'a yönlendir
     navigate('/doctor/dashboard');
   };
 
@@ -122,16 +135,6 @@ const AddPatient = () => {
                 <TextField
                   required
                   fullWidth
-                  label="Yaş"
-                  name="age"
-                  type="number"
-                  value={patientData.age}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
                   label="Doğum Tarihi"
                   name="birthDate"
                   type="date"
@@ -140,7 +143,6 @@ const AddPatient = () => {
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  sx={{ mb: 2 }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>

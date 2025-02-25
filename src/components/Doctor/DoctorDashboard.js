@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
   Box,
   Paper,
@@ -280,7 +280,7 @@ const DoctorDashboard = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {mockPatients.map((patient) => (
+                {patients.map((patient) => (
                   <TableRow
                     key={patient.id}
                     hover
@@ -289,7 +289,7 @@ const DoctorDashboard = () => {
                   >
                     <TableCell>{patient.name}</TableCell>
                     <TableCell>{patient.tcNo}</TableCell>
-                    <TableCell>{patient.age}</TableCell>
+                    <TableCell>{calculateAge(patient.birthDate)}</TableCell>
                     <TableCell>
                       <Chip
                         label={`%${patient.blockagePercentage}`}
