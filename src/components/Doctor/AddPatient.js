@@ -28,7 +28,7 @@ const AddPatient = () => {
     gender: '',
     blockagePercentage: 0,
     stentType: '',
-    stentLocation: '',
+    location: '',
     lastProcedureDate: new Date().toLocaleDateString('tr-TR'),
     nextAppointment: '',
     status: 'stable'
@@ -73,16 +73,22 @@ const AddPatient = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Hasta verisine yaş hesaplamasını ekle
-    const patientWithAge = {
+    // Mevcut hastaları al
+    const existingPatients = JSON.parse(localStorage.getItem('patients') || '[]');
+    
+    // Yeni hastayı ekle
+    const newPatient = {
       ...patientData,
-      age: calculateAge(patientData.birthDate)
+      id: Date.now() // Benzersiz ID
     };
     
-    const existingPatients = JSON.parse(localStorage.getItem('patients') || '[]');
-    const updatedPatients = [...existingPatients, patientWithAge];
+    // Hastaları güncelle
+    const updatedPatients = [...existingPatients, newPatient];
+    
+    // LocalStorage'a kaydet
     localStorage.setItem('patients', JSON.stringify(updatedPatients));
     
+    // Dashboard'a dön
     navigate('/doctor/dashboard');
   };
 
@@ -239,8 +245,8 @@ const AddPatient = () => {
                 <FormControl fullWidth>
                   <InputLabel>Stent Lokasyonu</InputLabel>
                   <Select
-                    name="stentLocation"
-                    value={patientData.stentLocation}
+                    name="location"
+                    value={patientData.location}
                     onChange={handleChange}
                     label="Stent Lokasyonu"
                   >
