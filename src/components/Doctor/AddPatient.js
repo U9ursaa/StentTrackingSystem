@@ -31,6 +31,28 @@ const AddPatient = () => {
     nextAppointment: '',
   });
 
+  // Stent lokasyonları
+  const stentLocations = [
+    { value: 'LAD', label: 'Sol Ön İnen Arter (LAD)' },
+    { value: 'LCX', label: 'Sol Sirkumfleks Arter (LCX)' },
+    { value: 'RCA', label: 'Sağ Koroner Arter (RCA)' },
+    { value: 'LMCA', label: 'Sol Ana Koroner Arter (LMCA)' },
+    { value: 'Diagonal', label: 'Diagonal Dal' },
+    { value: 'OM', label: 'Obtus Marginalis' },
+    { value: 'PDA', label: 'Posterior İnen Arter (PDA)' },
+    { value: 'PLV', label: 'Posterolateral Dal (PLV)' }
+  ];
+
+  // Stent tipleri
+  const stentTypes = [
+    { value: 'bms', label: 'İlaçsız Metal Stent (BMS)' },
+    { value: 'des', label: 'İlaç Kaplı Stent (DES)' },
+    { value: 'bes', label: 'Biyoçözünür Stent (BES)' },
+    { value: 'ses', label: 'Kendiliğinden Genişleyen Stent' },
+    { value: 'pdes', label: 'Polimer Bazlı İlaç Kaplı Stent' },
+    { value: 'pfdes', label: 'Polimer İçermeyen İlaç Kaplı Stent' }
+  ];
+
   const handleSubmit = (e) => {
     e.preventDefault();
     // Form gönderme işlemleri
@@ -170,7 +192,7 @@ const AddPatient = () => {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <FormControl fullWidth sx={{ mb: 2 }}>
+                <FormControl fullWidth>
                   <InputLabel>Stent Tipi</InputLabel>
                   <Select
                     name="stentType"
@@ -178,20 +200,30 @@ const AddPatient = () => {
                     onChange={handleChange}
                     label="Stent Tipi"
                   >
-                    <MenuItem value="ilacsiz">İlaçsız Stent</MenuItem>
-                    <MenuItem value="ilacli">İlaç Kaplı Stent</MenuItem>
+                    {stentTypes.map((type) => (
+                      <MenuItem key={type.value} value={type.value}>
+                        {type.label}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Stent Lokasyonu"
-                  name="stentLocation"
-                  value={patientData.stentLocation}
-                  onChange={handleChange}
-                  sx={{ mb: 2 }}
-                />
+                <FormControl fullWidth>
+                  <InputLabel>Stent Lokasyonu</InputLabel>
+                  <Select
+                    name="stentLocation"
+                    value={patientData.stentLocation}
+                    onChange={handleChange}
+                    label="Stent Lokasyonu"
+                  >
+                    {stentLocations.map((location) => (
+                      <MenuItem key={location.value} value={location.value}>
+                        {location.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField

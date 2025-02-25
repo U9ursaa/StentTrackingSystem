@@ -59,7 +59,7 @@ const DoctorDashboard = () => {
       lastProcedureDate: "15.02.2024",
       nextAppointment: "15.03.2024",
       status: "stable",
-      stentType: "İlaç Kaplı",
+      stentType: "İlaç Kaplı Stent (DES)",
       location: "LAD"
     },
     {
@@ -68,10 +68,10 @@ const DoctorDashboard = () => {
       tcNo: "12345678902",
       age: "58",
       blockagePercentage: 70,
-      lastProcedureDate: "10.02.2024",
-      nextAppointment: "10.03.2024",
+      lastProcedureDate: "02.10.2024",
+      nextAppointment: "03.10.2024",
       status: "follow-up",
-      stentType: "İlaç Kaplı",
+      stentType: "Biyoçözünür Stent (BES)",
       location: "RCA"
     },
     {
@@ -80,8 +80,8 @@ const DoctorDashboard = () => {
       tcNo: "12345678903",
       age: "72",
       blockagePercentage: 85,
-      lastProcedureDate: "05.02.2024",
-      nextAppointment: "05.03.2024",
+      lastProcedureDate: "02.05.2024",
+      nextAppointment: "03.05.2024",
       status: "critical",
       stentType: "İlaçsız",
       location: "Cx"
@@ -104,8 +104,8 @@ const DoctorDashboard = () => {
       tcNo: "12345678905",
       age: "69",
       blockagePercentage: 75,
-      lastProcedureDate: "12.02.2024",
-      nextAppointment: "12.03.2024",
+      lastProcedureDate: "02.12.2024",
+      nextAppointment: "03.12.2024",
       status: "follow-up",
       stentType: "İlaçsız",
       location: "RCA"
@@ -289,20 +289,16 @@ const DoctorDashboard = () => {
                   >
                     <TableCell>{patient.name}</TableCell>
                     <TableCell>{patient.tcNo}</TableCell>
-                    <TableCell>{patient.age} ({calculateAge(patient.birthDate)} yaş)</TableCell>
+                    <TableCell>{patient.age}</TableCell>
                     <TableCell>
-                      <Chip 
+                      <Chip
                         label={`%${patient.blockagePercentage}`}
-                        color={getBlockageColor(patient.blockagePercentage)}
+                        color={patient.blockagePercentage >= 70 ? "error" : "warning"}
                         size="small"
                       />
                     </TableCell>
-                    <TableCell>
-                      {new Date(patient.lastProcedureDate).toLocaleDateString('tr-TR')}
-                    </TableCell>
-                    <TableCell>
-                      {new Date(patient.nextAppointment).toLocaleDateString('tr-TR')}
-                    </TableCell>
+                    <TableCell>{patient.lastProcedureDate}</TableCell>
+                    <TableCell>{patient.nextAppointment}</TableCell>
                     <TableCell>{patient.stentType}</TableCell>
                     <TableCell>{patient.location}</TableCell>
                     <TableCell>
