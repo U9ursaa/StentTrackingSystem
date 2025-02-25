@@ -57,6 +57,44 @@ const PatientDashboard = () => {
     }
   };
 
+  const renderMedications = () => (
+    <Box sx={{ mt: 3 }}>
+      <Typography variant="h6" gutterBottom>
+        Kullanılan İlaçlar
+      </Typography>
+      <List>
+        {patientInfo.medications.map((med, index) => (
+          <ListItem 
+            key={index}
+            sx={{ 
+              mb: 1,
+              bgcolor: 'background.paper',
+              borderRadius: 1,
+              boxShadow: 1
+            }}
+          >
+            <ListItemIcon>
+              <MedicationIcon color="primary" />
+            </ListItemIcon>
+            <ListItemText
+              primary={med}
+              secondary={
+                <Box sx={{ mt: 1 }}>
+                  <Typography variant="body2" color="text.secondary">
+                    <strong>Doz:</strong> {med.split(' ')[1]}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    <strong>Kullanım:</strong> {med.split(' ')[2]}
+                  </Typography>
+                </Box>
+              }
+            />
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+
   return (
     <>
       <PatientHeader />
@@ -171,23 +209,7 @@ const PatientDashboard = () => {
 
               {/* İlaçlar */}
               <Grid item xs={12}>
-                <Card>
-                  <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                      Kullanılan İlaçlar
-                    </Typography>
-                    <List>
-                      {patientInfo.medications.map((med, index) => (
-                        <ListItem key={index}>
-                          <ListItemIcon>
-                            <MedicationIcon />
-                          </ListItemIcon>
-                          <ListItemText primary={med} />
-                        </ListItem>
-                      ))}
-                    </List>
-                  </CardContent>
-                </Card>
+                {renderMedications()}
               </Grid>
             </Grid>
           </Grid>
