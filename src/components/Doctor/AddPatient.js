@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Paper,
@@ -10,143 +10,38 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Slider,
-  Chip,
-  Stack,
-  Alert
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { PatientContext } from '../../context/PatientContext';
 import Header from '../Layout/Header';
 
 const AddPatient = () => {
   const navigate = useNavigate();
-  const { addPatient } = useContext(PatientContext);
-  const [error, setError] = useState('');
-  const [patient, setPatient] = useState({
-    tcNo: '',
+  const [patientData, setPatientData] = useState({
     name: '',
-    birthDate: null,
-    nationality: 'TC',
-    city: '',
-    address: '',
+    tcNo: '',
+    birthDate: '',
     phone: '',
     email: '',
-    blockagePercentage: 0,
-    procedureDate: null,
-    stentDetails: '',
-    procedureType: '',
-    medications: []
+    address: '',
+    gender: '',
+    blockagePercentage: '',
+    stentType: '',
+    stentLocation: '',
+    nextAppointment: '',
   });
-
-  const [selectedMed, setSelectedMed] = useState('');
-
-  const medicationOptions = [
-    'Plavix',
-    'Aspirin',
-    'Atorvastatin',
-    'Metoprolol',
-    'Ramipril',
-    'Diltiazem',
-    'Rosuvastatin'
-  ];
-
-  const stentTypes = [
-    'İlaç kaplı stent',
-    'Metal stent',
-    'Biyoemilebilir stent'
-  ];
-
-  const stentLocations = [
-    'Sol ana koroner arter',
-    'Sağ koroner arter',
-    'Sol ön inen arter',
-    'Sirkumfleks arter',
-    'Diagonal arter',
-    'RCA proksimal',
-    'RCA distal'
-  ];
-
-  const cities = [
-    'Adana', 'Ankara', 'İstanbul', 'İzmir', 'Bursa', 'Antalya', 
-    // ... diğer şehirler
-  ];
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setPatient(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleMedicationAdd = () => {
-    if (selectedMed && !patient.medications.includes(selectedMed)) {
-      setPatient(prev => ({
-        ...prev,
-        medications: [...prev.medications, selectedMed]
-      }));
-      setSelectedMed('');
-    }
-  };
-
-  const handleMedicationDelete = (medToDelete) => {
-    setPatient(prev => ({
-      ...prev,
-      medications: prev.medications.filter(med => med !== medToDelete)
-    }));
-  };
-
-  // Yaş hesaplama fonksiyonu
-  const calculateAge = (birthDate) => {
-    if (!birthDate) return '';
-    const today = new Date();
-    const birth = new Date(birthDate);
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--;
-    }
-    
-    return age;
-  };
-
-  // Doğum tarihi değiştiğinde
-  const handleBirthDateChange = (newValue) => {
-    setPatient(prev => ({
-      ...prev,
-      birthDate: newValue,
-      age: calculateAge(newValue) // Yaşı state'de tutuyoruz ama göstermiyoruz
-    }));
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    try {
-      // Form validasyonu
-      if (!patient.name || !patient.procedureDate || 
-          !patient.stentDetails || !patient.procedureType) {
-        setError('Lütfen tüm zorunlu alanları doldurun');
-        return;
-      }
+    // Form gönderme işlemleri
+    navigate('/doctor/dashboard');
+  };
 
-      // Hasta verilerini hazırla
-      const newPatient = {
-        ...patient,
-        procedureDate: patient.procedureDate.toISOString(),
-        lastProcedureDate: patient.procedureDate.toISOString(),
-      };
-
-      // Context üzerinden hasta ekle
-      addPatient(newPatient);
-      
-      // Başarılı ekleme sonrası yönlendirme
-      navigate('/doctor/dashboard');
-    } catch (err) {
-      setError('Hasta eklenirken bir hata oluştu: ' + err.message);
-    }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setPatientData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
   };
 
   return (
@@ -154,233 +49,151 @@ const AddPatient = () => {
       <Header />
       <Box sx={{ p: 4 }}>
         <Paper sx={{ p: 4 }}>
-          <Typography variant="h5" sx={{ mb: 4, color: '#2c3e50' }}>
+          <Typography variant="h6" gutterBottom>
             Yeni Hasta Ekle
           </Typography>
-
-          {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {error}
-            </Alert>
-          )}
-
           <form onSubmit={handleSubmit}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="T.C. Kimlik No"
-                  name="tcNo"
-                  value={patient.tcNo}
-                  onChange={handleChange}
-                  required
-                  inputProps={{ 
-                    maxLength: 11,
-                    pattern: "[0-9]*"
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="Ad Soyad"
                   name="name"
-                  value={patient.name}
+                  value={patientData.name}
                   onChange={handleChange}
-                  required
+                  sx={{ mb: 2 }}
                 />
               </Grid>
-
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="T.C. Kimlik No"
+                  name="tcNo"
+                  value={patientData.tcNo}
+                  onChange={handleChange}
+                  sx={{ mb: 2 }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="Doğum Tarihi"
                   name="birthDate"
                   type="date"
-                  value={patient.birthDate ? patient.birthDate.toISOString().split('T')[0] : ''}
+                  value={patientData.birthDate}
                   onChange={handleChange}
-                  required
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  sx={{ mb: 2 }}
                 />
               </Grid>
-
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Uyruk"
-                  name="nationality"
-                  value={patient.nationality}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth required>
-                  <InputLabel>Şehir</InputLabel>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth sx={{ mb: 2 }}>
+                  <InputLabel>Cinsiyet</InputLabel>
                   <Select
-                    name="city"
-                    value={patient.city}
-                    label="Şehir"
+                    name="gender"
+                    value={patientData.gender}
                     onChange={handleChange}
+                    label="Cinsiyet"
                   >
-                    {cities.map((city) => (
-                      <MenuItem key={city} value={city}>{city}</MenuItem>
-                    ))}
+                    <MenuItem value="male">Erkek</MenuItem>
+                    <MenuItem value="female">Kadın</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
-
-              <Grid item xs={12}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Açık Adres"
-                  name="address"
-                  value={patient.address}
-                  onChange={handleChange}
-                  multiline
-                  rows={3}
-                  required
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Telefon Numarası"
+                  label="Telefon"
                   name="phone"
-                  value={patient.phone}
+                  value={patientData.phone}
                   onChange={handleChange}
-                  required
-                  inputProps={{ maxLength: 11 }}
+                  sx={{ mb: 2 }}
                 />
               </Grid>
-
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="E-posta"
                   name="email"
                   type="email"
-                  value={patient.email}
+                  value={patientData.email}
                   onChange={handleChange}
-                  required
+                  sx={{ mb: 2 }}
                 />
               </Grid>
-
-              <Grid item xs={12}>
-                <Typography gutterBottom>
-                  Stent Tıkanıklık Yüzdesi: {patient.blockagePercentage}%
-                </Typography>
-                <Slider
-                  value={patient.blockagePercentage}
-                  onChange={(e, newValue) => setPatient(prev => ({...prev, blockagePercentage: newValue}))}
-                  valueLabelDisplay="auto"
-                  step={5}
-                  marks
-                  min={0}
-                  max={100}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth required>
-                  <InputLabel>Stent Tipi</InputLabel>
-                  <Select
-                    name="procedureType"
-                    value={patient.procedureType}
-                    label="Stent Tipi"
-                    onChange={handleChange}
-                  >
-                    {stentTypes.map((type) => (
-                      <MenuItem key={type} value={type}>{type}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth required>
-                  <InputLabel>Stent Lokasyonu</InputLabel>
-                  <Select
-                    name="stentDetails"
-                    value={patient.stentDetails}
-                    label="Stent Lokasyonu"
-                    onChange={handleChange}
-                  >
-                    {stentLocations.map((location) => (
-                      <MenuItem key={location} value={location}>{location}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  label="İşlem Tarihi"
-                  name="procedureDate"
-                  type="date"
-                  value={patient.procedureDate ? patient.procedureDate.toISOString().split('T')[0] : ''}
+                  label="Adres"
+                  name="address"
+                  multiline
+                  rows={2}
+                  value={patientData.address}
                   onChange={handleChange}
-                  required
+                  sx={{ mb: 2 }}
                 />
               </Grid>
-
-              <Grid item xs={12}>
-                <Box sx={{ mb: 2 }}>
-                  <FormControl fullWidth sx={{ mb: 1 }}>
-                    <InputLabel>İlaçlar</InputLabel>
-                    <Select
-                      value={selectedMed}
-                      label="İlaçlar"
-                      onChange={(e) => setSelectedMed(e.target.value)}
-                    >
-                      {medicationOptions.map((med) => (
-                        <MenuItem key={med} value={med}>{med}</MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <Button 
-                    variant="outlined" 
-                    onClick={handleMedicationAdd}
-                    disabled={!selectedMed}
-                  >
-                    İlaç Ekle
-                  </Button>
-                </Box>
-                <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
-                  {patient.medications.map((med) => (
-                    <Chip
-                      key={med}
-                      label={med}
-                      onDelete={() => handleMedicationDelete(med)}
-                    />
-                  ))}
-                </Stack>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Tıkanıklık Yüzdesi"
+                  name="blockagePercentage"
+                  type="number"
+                  value={patientData.blockagePercentage}
+                  onChange={handleChange}
+                  sx={{ mb: 2 }}
+                />
               </Grid>
-
-              <Grid item xs={12} sx={{ mt: 3 }}>
-                <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-                  <Button 
-                    variant="outlined" 
-                    onClick={() => navigate('/doctor/dashboard')}
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth sx={{ mb: 2 }}>
+                  <InputLabel>Stent Tipi</InputLabel>
+                  <Select
+                    name="stentType"
+                    value={patientData.stentType}
+                    onChange={handleChange}
+                    label="Stent Tipi"
                   >
-                    İptal
-                  </Button>
-                  <Button 
-                    type="submit" 
-                    variant="contained"
-                    sx={{ 
-                      backgroundColor: '#2c3e50',
-                      '&:hover': { backgroundColor: '#34495e' }
-                    }}
-                  >
-                    Hasta Ekle
-                  </Button>
-                </Box>
+                    <MenuItem value="ilacsiz">İlaçsız Stent</MenuItem>
+                    <MenuItem value="ilacli">İlaç Kaplı Stent</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Stent Lokasyonu"
+                  name="stentLocation"
+                  value={patientData.stentLocation}
+                  onChange={handleChange}
+                  sx={{ mb: 2 }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Sonraki Randevu"
+                  name="nextAppointment"
+                  type="date"
+                  value={patientData.nextAppointment}
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  sx={{ mb: 2 }}
+                />
               </Grid>
             </Grid>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+              <Button
+                variant="contained"
+                type="submit"
+                sx={{ backgroundColor: '#2c3e50' }}
+              >
+                Hasta Ekle
+              </Button>
+            </Box>
           </form>
         </Paper>
       </Box>
