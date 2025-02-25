@@ -20,7 +20,11 @@ import {
   Medication as MedicationIcon,
   Timeline as TimelineIcon,
   Phone as PhoneIcon,
-  Email as EmailIcon
+  Email as EmailIcon,
+  Medication as MedicationIconMUI,
+  Warning as WarningIcon,
+  AccessTime as AccessTimeIcon,
+  Restaurant as RestaurantIcon
 } from '@mui/icons-material';
 import PatientHeader from './PatientHeader';
 
@@ -46,9 +50,27 @@ const PatientDashboard = () => {
       type: "Kontrol Randevusu"
     },
     medications: [
-      "Plavix 75mg (1x1)",
-      "Aspirin 100mg (1x1)",
-      "Atorvastatin 40mg (1x1)"
+      {
+        name: "Plavix",
+        frequency: "1x1",
+        timing: "ac",
+        specialInstructions: null,
+        warnings: null
+      },
+      {
+        name: "Aspirin",
+        frequency: "1x1",
+        timing: "ac",
+        specialInstructions: null,
+        warnings: null
+      },
+      {
+        name: "Atorvastatin",
+        frequency: "1x1",
+        timing: "ac",
+        specialInstructions: null,
+        warnings: null
+      }
     ],
     stentInfo: {
       location: "Sol ön inen arter (LAD)",
@@ -64,32 +86,86 @@ const PatientDashboard = () => {
       </Typography>
       <List>
         {patientInfo.medications.map((med, index) => (
-          <ListItem 
-            key={index}
+          <Paper 
+            key={index} 
             sx={{ 
-              mb: 1,
-              bgcolor: 'background.paper',
-              borderRadius: 1,
-              boxShadow: 1
+              mb: 2, 
+              p: 2,
+              border: '1px solid',
+              borderColor: 'grey.200',
+              borderRadius: 2
             }}
           >
-            <ListItemIcon>
-              <MedicationIcon color="primary" />
-            </ListItemIcon>
-            <ListItemText
-              primary={med}
-              secondary={
-                <Box sx={{ mt: 1 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    <strong>Doz:</strong> {med.split(' ')[1]}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    <strong>Kullanım:</strong> {med.split(' ')[2]}
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <MedicationIconMUI color="primary" sx={{ mr: 1 }} />
+              <Typography variant="subtitle1" color="primary" sx={{ fontWeight: 'bold' }}>
+                {med.name}
+              </Typography>
+            </Box>
+
+            <Box sx={{ pl: 4 }}>
+              {/* Doz ve Kullanım */}
+              <Box sx={{ mb: 1 }}>
+                <Typography variant="body1">
+                  <AccessTimeIcon sx={{ fontSize: 20, mr: 1, verticalAlign: 'middle' }} />
+                  <strong>Ne Zaman:</strong> Günde {med.frequency.split('x')[0]} kez
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ ml: 4 }}>
+                  ({med.frequency.split('x')[0]} defa, her seferinde {med.frequency.split('x')[1]} tablet)
+                </Typography>
+              </Box>
+
+              {/* Yemek Durumu */}
+              <Box sx={{ mb: 1 }}>
+                <Typography variant="body1">
+                  <RestaurantIcon sx={{ fontSize: 20, mr: 1, verticalAlign: 'middle' }} />
+                  <strong>Nasıl:</strong> {
+                    med.timing === 'ac' ? 'Aç karnına alınmalı' :
+                    med.timing === 'pc' ? 'Tok karnına alınmalı' :
+                    med.timing === 'morning' ? 'Sabah alınmalı' :
+                    med.timing === 'evening' ? 'Akşam alınmalı' : 'Belirtilen saatlerde alınmalı'
+                  }
+                </Typography>
+              </Box>
+
+              {/* Özel Talimatlar */}
+              {med.specialInstructions && (
+                <Box sx={{ 
+                  mt: 1,
+                  p: 1.5,
+                  bgcolor: 'info.light',
+                  borderRadius: 1,
+                  color: 'info.contrastText'
+                }}>
+                  <Typography variant="body2">
+                    <strong>Önemli Not:</strong> {med.specialInstructions}
                   </Typography>
                 </Box>
-              }
-            />
-          </ListItem>
+              )}
+
+              {/* Uyarılar */}
+              {med.warnings && (
+                <Box sx={{ 
+                  mt: 1,
+                  p: 1.5,
+                  bgcolor: 'warning.light',
+                  borderRadius: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1
+                }}>
+                  <WarningIcon color="warning" />
+                  <Typography variant="body2" color="warning.dark">
+                    <strong>Uyarı:</strong> {
+                      med.name === 'Aspirin' ? 'Mide hassasiyeti olan hastalar dikkat etmeli' :
+                      med.name === 'Plavix' ? 'Kanama riski artabilir' :
+                      'Yan etkiler görülürse doktorunuza danışın'
+                    }
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+          </Paper>
         ))}
       </List>
     </Box>
