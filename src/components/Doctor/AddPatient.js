@@ -10,6 +10,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Slider,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Header from '../Layout/Header';
@@ -24,7 +25,7 @@ const AddPatient = () => {
     email: '',
     address: '',
     gender: '',
-    blockagePercentage: '',
+    blockagePercentage: 0,
     stentType: '',
     stentLocation: '',
     nextAppointment: '',
@@ -41,6 +42,13 @@ const AddPatient = () => {
     setPatientData(prevState => ({
       ...prevState,
       [name]: value
+    }));
+  };
+
+  const handleSliderChange = (event, newValue) => {
+    setPatientData(prevState => ({
+      ...prevState,
+      blockagePercentage: newValue
     }));
   };
 
@@ -135,15 +143,30 @@ const AddPatient = () => {
                   sx={{ mb: 2 }}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Tıkanıklık Yüzdesi"
-                  name="blockagePercentage"
-                  type="number"
+              <Grid item xs={12}>
+                <Typography gutterBottom>
+                  Tıkanıklık Yüzdesi: {patientData.blockagePercentage}%
+                </Typography>
+                <Slider
                   value={patientData.blockagePercentage}
-                  onChange={handleChange}
-                  sx={{ mb: 2 }}
+                  onChange={handleSliderChange}
+                  aria-labelledby="blockage-slider"
+                  valueLabelDisplay="auto"
+                  step={1}
+                  marks={[
+                    { value: 0, label: '0%' },
+                    { value: 25, label: '25%' },
+                    { value: 50, label: '50%' },
+                    { value: 75, label: '75%' },
+                    { value: 100, label: '100%' }
+                  ]}
+                  sx={{
+                    color: (theme) => {
+                      if (patientData.blockagePercentage >= 70) return theme.palette.error.main;
+                      if (patientData.blockagePercentage >= 50) return theme.palette.warning.main;
+                      return theme.palette.success.main;
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
