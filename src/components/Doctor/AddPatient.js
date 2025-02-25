@@ -18,8 +18,10 @@ import Header from '../Layout/Header';
 const AddPatient = () => {
   const navigate = useNavigate();
   const [patientData, setPatientData] = useState({
+    id: Date.now(),
     name: '',
     tcNo: '',
+    age: '',
     birthDate: '',
     phone: '',
     email: '',
@@ -28,7 +30,9 @@ const AddPatient = () => {
     blockagePercentage: 0,
     stentType: '',
     stentLocation: '',
+    lastProcedureDate: new Date().toLocaleDateString('tr-TR'),
     nextAppointment: '',
+    status: 'stable'
   });
 
   // Stent lokasyonları
@@ -55,7 +59,17 @@ const AddPatient = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Form gönderme işlemleri
+    
+    // LocalStorage'dan mevcut hastaları al
+    const existingPatients = JSON.parse(localStorage.getItem('patients') || '[]');
+    
+    // Yeni hastayı ekle
+    const updatedPatients = [...existingPatients, patientData];
+    
+    // LocalStorage'a kaydet
+    localStorage.setItem('patients', JSON.stringify(updatedPatients));
+    
+    // Dashboard'a yönlendir
     navigate('/doctor/dashboard');
   };
 
@@ -86,22 +100,33 @@ const AddPatient = () => {
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  required
                   fullWidth
                   label="Ad Soyad"
                   name="name"
                   value={patientData.name}
                   onChange={handleChange}
-                  sx={{ mb: 2 }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  required
                   fullWidth
                   label="T.C. Kimlik No"
                   name="tcNo"
                   value={patientData.tcNo}
                   onChange={handleChange}
-                  sx={{ mb: 2 }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  label="Yaş"
+                  name="age"
+                  type="number"
+                  value={patientData.age}
+                  onChange={handleChange}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
