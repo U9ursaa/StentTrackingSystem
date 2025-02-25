@@ -49,6 +49,69 @@ const DoctorDashboard = () => {
     profileImage: null // Varsayılan olarak null
   });
 
+  const mockPatients = [
+    {
+      id: 1,
+      name: "Ahmet Yılmaz",
+      tcNo: "12345678901",
+      age: "65",
+      blockagePercentage: 80,
+      lastProcedureDate: "15.02.2024",
+      nextAppointment: "15.03.2024",
+      status: "stable",
+      stentType: "İlaç Kaplı",
+      location: "LAD"
+    },
+    {
+      id: 2,
+      name: "Ayşe Demir",
+      tcNo: "12345678902",
+      age: "58",
+      blockagePercentage: 70,
+      lastProcedureDate: "10.02.2024",
+      nextAppointment: "10.03.2024",
+      status: "follow-up",
+      stentType: "İlaç Kaplı",
+      location: "RCA"
+    },
+    {
+      id: 3,
+      name: "Mehmet Kaya",
+      tcNo: "12345678903",
+      age: "72",
+      blockagePercentage: 85,
+      lastProcedureDate: "05.02.2024",
+      nextAppointment: "05.03.2024",
+      status: "critical",
+      stentType: "İlaçsız",
+      location: "Cx"
+    },
+    {
+      id: 4,
+      name: "Fatma Şahin",
+      tcNo: "12345678904",
+      age: "61",
+      blockagePercentage: 65,
+      lastProcedureDate: "20.02.2024",
+      nextAppointment: "20.03.2024",
+      status: "stable",
+      stentType: "İlaç Kaplı",
+      location: "LAD"
+    },
+    {
+      id: 5,
+      name: "Ali Öztürk",
+      tcNo: "12345678905",
+      age: "69",
+      blockagePercentage: 75,
+      lastProcedureDate: "12.02.2024",
+      nextAppointment: "12.03.2024",
+      status: "follow-up",
+      stentType: "İlaçsız",
+      location: "RCA"
+    }
+  ];
+
   const handleProfileClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -103,6 +166,40 @@ const DoctorDashboard = () => {
     return age;
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'stable':
+        return 'success';
+      case 'follow-up':
+        return 'warning';
+      case 'critical':
+        return 'error';
+      default:
+        return 'default';
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'stable':
+        return 'Stabil';
+      case 'follow-up':
+        return 'Takipte';
+      case 'critical':
+        return 'Kritik';
+      default:
+        return 'Bilinmiyor';
+    }
+  };
+
+  const handleAddPatient = () => {
+    navigate('/doctor/add-patient');
+  };
+
+  const handlePatientClick = (patientId) => {
+    navigate(`/doctor/patient/${patientId}`);
+  };
+
   return (
     <>
       <Header />
@@ -112,7 +209,7 @@ const DoctorDashboard = () => {
             <Button
               variant="contained"
               startIcon={<AddIcon />}
-              onClick={() => navigate('/doctor/add-patient')}
+              onClick={handleAddPatient}
               sx={{ backgroundColor: '#2c3e50' }}
             >
               YENİ HASTA EKLE
@@ -156,31 +253,35 @@ const DoctorDashboard = () => {
               <TableHead>
                 <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
                   <TableCell sx={{ fontWeight: 'bold' }}>Hasta Adı</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>T.C. No</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Yaş</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Stent Tıkanıklık %</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Son İşlem Tarihi</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Sonraki Randevu</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Stent Tipi</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Lokasyon</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Durum</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>İşlemler</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {patients.map((patient) => (
+                {mockPatients.map((patient) => (
                   <TableRow 
                     key={patient.id}
                     sx={{ 
                       '&:hover': { backgroundColor: '#f8f9fa' },
                       transition: 'background-color 0.2s'
                     }}
+                    onClick={() => handlePatientClick(patient.id)}
                   >
-                    <TableCell>
-                      {patient.name} ({calculateAge(patient.birthDate)} yaş)
-                    </TableCell>
+                    <TableCell>{patient.name}</TableCell>
+                    <TableCell>{patient.tcNo}</TableCell>
+                    <TableCell>{patient.age} ({calculateAge(patient.birthDate)} yaş)</TableCell>
                     <TableCell>
                       <Chip 
                         label={`%${patient.blockagePercentage}`}
                         color={getBlockageColor(patient.blockagePercentage)}
                         size="small"
-                        sx={{ minWidth: '60px', fontWeight: 'bold' }}
                       />
                     </TableCell>
                     <TableCell>
@@ -189,10 +290,17 @@ const DoctorDashboard = () => {
                     <TableCell>
                       {new Date(patient.nextAppointment).toLocaleDateString('tr-TR')}
                     </TableCell>
-                    <TableCell>{getStatusIcon(patient)}</TableCell>
+                    <TableCell>{patient.stentType}</TableCell>
+                    <TableCell>{patient.location}</TableCell>
+                    <TableCell>
+                      <Chip
+                        label={getStatusText(patient.status)}
+                        color={getStatusColor(patient.status)}
+                        size="small"
+                      />
+                    </TableCell>
                     <TableCell>
                       <IconButton 
-                        onClick={() => navigate(`/doctor/patient/${patient.id}`)}
                         size="small"
                         sx={{ color: '#2c3e50' }}
                       >
